@@ -25,10 +25,10 @@ public class ServerClient {
     /**
      * Start client socket connection, reads input to send to server.
      */
-    public void startClient() {
-        try(    Socket socket = new Socket("localhost", ServerConstants.PORT);
+    public static void main(String[] args){
+        try(    Socket socket = new Socket("localhost", 8080);
                 PrintWriter output = new PrintWriter(socket.getOutputStream(), true);
-            BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));) {
+            BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
             BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
             String userInput;
             System.out.println("Please enter message: ");

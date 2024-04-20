@@ -1,9 +1,6 @@
 package tcpserver.src.main;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.logging.Logger;
@@ -21,18 +18,29 @@ public class Server implements Runnable{
     Server(){
         logger.setLevel(Level.INFO);
     }
+    private void runClientThread(ServerSocket server){
+        try{
+            Socket socket = server.accept();
+            logger.log(Level.INFO, "Accepted connection from {0}.",
+                    new Object[]{socket.getRemoteSocketAddress()});
+            ClientThread clientThread = new ClientThread(socket);
+            if(socket.isClosed()){
+                logger.log(Level.INFO, "Socket already closed returning");
+                return;
+            }
+            Thread t = new Thread(clientThread);
+            t.start();
+        }
+        catch (IOException e) {
+            logger.log(Level.SEVERE, "Error accepting client connection", e);
+        }
+    }
     public void run() {
 
-        try(ServerSocket server = new ServerSocket(ServerConstants.PORT);
-            Socket socket = server.accept();
-            PrintWriter output = new PrintWriter(socket.getOutputStream());
-            BufferedReader input =  new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+        try(ServerSocket server = new ServerSocket(ServerConstants.PORT)){
             logger.log(Level.INFO,"Server started on port {0}", ServerConstants.PORT);
-            String inputLine;
-            while ((inputLine = input.readLine()) != null) {
-                logger.log(Level.INFO, "Server received {0}",inputLine);
-                output.println(inputLine);
-                output.flush();
+            while(!Thread.currentThread().isInterrupted()){
+                runClientThread(server);
             }
         } catch(IOException ex) {
             logger.log(Level.SEVERE, String.format("Exception caught while trying to listen on port %d Error: %s", ServerConstants.PORT, ex.getMessage()));
