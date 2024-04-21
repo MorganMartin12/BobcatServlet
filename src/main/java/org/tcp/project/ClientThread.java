@@ -1,4 +1,4 @@
-package tcpserver.src.main;
+package org.tcp.project;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,9 +17,9 @@ public class ClientThread implements Runnable {
         logger.setLevel(Level.INFO);
     }
 
-    public void run() {
+    public void run(){
         if (this.socket.isClosed()) {
-            logger.log(Level.SEVERE, "Socket is already closed before obtaining streams.");
+            logger.log(Level.WARNING, "Socket was closed before operation could commence.");
             return;
         }
         try (PrintWriter output = new PrintWriter(this.socket.getOutputStream());
@@ -31,12 +31,13 @@ public class ClientThread implements Runnable {
                 output.flush();
             }
         } catch (IOException e) {
-            logger.log(Level.SEVERE, String.format("Exception caught while trying to listen on port %d Error: %s", ServerConstants.PORT, e.getMessage()));
-        } finally{
+            logger.log(Level.SEVERE, "I/O error in client thread", e);
+        }
+        finally{
             try {
                 socket.close();
             }catch (IOException e) {
-                logger.log(Level.SEVERE, String.format("Exception caught while trying close socket %d : %s", socket.getPort(), e.getMessage()));
+                logger.log(Level.SEVERE, "Error closing socket", e);
             }
         }
     }

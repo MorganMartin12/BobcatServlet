@@ -1,9 +1,11 @@
-package tcpserver.src.main;
+package org.tcp.project;
 
 /**
  * The type Main server.
  */
 public class MainServer{
+
+
     /**
      * Main.
      *

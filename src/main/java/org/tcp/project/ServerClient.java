@@ -1,4 +1,4 @@
-package tcpserver.src.main;
+package org.tcp.project;
 
 import java.io.BufferedReader;
 import java.io.IOException;

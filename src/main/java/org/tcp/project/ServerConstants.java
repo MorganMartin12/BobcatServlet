@@ -1,4 +1,4 @@
-package tcpserver.src.main;
+package org.tcp.project;
 
 /**
  * The type Server constants.
