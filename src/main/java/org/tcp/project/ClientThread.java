@@ -22,16 +22,18 @@ public class ClientThread implements Runnable {
             logger.log(Level.WARNING, "Socket was closed before operation could commence.");
             return;
         }
+
         try (PrintWriter output = new PrintWriter(this.socket.getOutputStream());
              BufferedReader input = new BufferedReader(new InputStreamReader(this.socket.getInputStream()))) {
+            socket.setSoTimeout(5000);
             String inputLine;
-            while ((inputLine = input.readLine()) != null) {
+            while ((inputLine = input.readLine()) != null && !Thread.currentThread().isInterrupted()) {
                 logger.log(Level.INFO, "Server received {0}",inputLine);
                 output.println(inputLine);
                 output.flush();
             }
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "I/O error in client thread", e);
+            logger.log(Level.SEVERE, "Error in client thread", e);
         }
         finally{
             try {

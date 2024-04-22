@@ -44,7 +44,6 @@ public class Server implements Runnable{
     }
     public void stop() {
         try {
-            // Closing the server socket will cause serverSocket.accept() to throw a SocketException.
             if (serverSocket != null && !serverSocket.isClosed()) {
                 serverSocket.close();
             }
@@ -57,10 +56,11 @@ public class Server implements Runnable{
     private void shutdownAndAwaitTermination(ExecutorService pool) {
         pool.shutdown();
         try {
-            if (!pool.awaitTermination(60, TimeUnit.SECONDS)) {
+            if (!pool.awaitTermination(4, TimeUnit.SECONDS)) {
                 pool.shutdownNow();
-                if (!pool.awaitTermination(60, TimeUnit.SECONDS))
+                if (!pool.awaitTermination(4, TimeUnit.SECONDS)) {
                     logger.warning("Pool did not terminate");
+                }
             }
         } catch (InterruptedException ie) {
             pool.shutdownNow();
